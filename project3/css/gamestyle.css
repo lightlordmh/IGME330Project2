@@ -1,0 +1,137 @@
+		svg { position:absolute }
+		html, body {
+			margin: 0;
+			padding: 0;
+		}
+		#score {
+			fill: white;
+		}
+		#combo {
+			fill: white;
+		}
+		#difficulty {
+			fill: white;
+		}
+		#game {
+			background-color: black;
+		}
+		#GameOverTitle{
+			color: white;
+			position: absolute;
+			font-size: 400%;		
+			margin-left: 37%;
+			margin-top: 8%;
+		}
+		#hiscore{
+			position: absolute;
+			margin-top: 30%;
+			margin-left: 60%;
+			padding: 2.5% 2.5% 2.5% 2.5%;
+			text-align: center;
+			width: 15%;
+			opacity: .8;
+			background-color: white;
+		}
+		#gotomain{
+			position: absolute;
+			margin-top: 30%;
+			margin-left: 20%;
+			padding: 2.5% 2.5% 2.5% 2.5%;
+			text-align: center;
+			width: 15%;
+			opacity: .8;
+			background-color: white;
+		}
+		#gotomain2{
+			position: absolute;
+			margin-top: 30%;
+			margin-left: 10%;
+			padding: 2.5% 2.5% 2.5% 2.5%;
+			text-align: center;
+			width: 15%;
+			opacity: .8;
+			background-color: white;
+		}
+		#menu1 {
+			background-color: black;
+		}
+		.menuoff {display: none;}
+		.gameoff {display: none;}
+		#Title {
+			color: white;
+			position: absolute;
+			font-size: 400%;		
+			margin-left: 37%;
+			margin-top: 8%;
+		}
+		#startbutton {
+			position: absolute;
+			margin-top: 30%;
+			margin-left: 20%;
+			padding: 2.5% 2.5% 2.5% 2.5%;
+			text-align: center;
+			width: 15%;
+			opacity: .8;
+			background-color: white;
+		}
+		#instructions{
+			position: absolute;
+			margin-top: 30%;
+			margin-left: 60%;
+			padding: 2.5% 2.5% 2.5% 2.5%;
+			width: 15%;
+			text-align: center;
+			opacity: .8;
+			background-color: white;
+		}
+		#Instructions {
+			color: white;
+			position: absolute;
+			font-size: 400%;		
+			margin-left: 42%;
+			margin-top: 8%;
+		}
+		#howtoplay1{
+			position: absolute;
+			margin-top: 18%;
+			margin-left: 33%;
+			font-size: 150%;
+			padding: 2.5% 2.5% 2.5% 2.5%;
+			width: 33%;
+			text-align: center;
+			opacity: .8;
+			background-color: white;
+			font-family: sans-serif;
+		}
+		.blueplayer {
+			fill:url(#img1);
+			stroke-width: 4px;
+			stroke: rgba(0,0,255, .80);
+		}
+		.redplayer {
+			fill:url(#img2);
+			stroke-width: 4px;
+			stroke: rgba(255,0, 0, .80);
+		}
+		.greenplayer {
+			fill:url(#img3);
+			stroke-width: 4px;
+			stroke: rgba(0,255, 0, .80);
+		}
+		.orangeplayer {
+			fill:url(#img4);
+			stroke-width: 4px;
+			stroke: rgba(220, 139, 24, .8);
+		}
+		.blueenemy {
+				fill:url(#img6);
+		}
+		.redenemy {
+				fill:url(#img5);
+		}
+		.greenenemy {
+				fill:url(#img7);
+		}
+		.orangeenemy {
+				fill:url(#img8);
+		}
