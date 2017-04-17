@@ -30,6 +30,50 @@ window.addEventListener("keydown",function(e){
 	console.log("keydown=" + e.keyCode);
 	myKeys.keydown[e.keyCode] = true;
 });
+
+window.addEventListener("keyup",function(e){
+	console.log("keyup=" + e.keyCode);
+	myKeys.keydown[e.keyCode] = false;
+	
+	var char = String.fromCharCode(e.keyCode);
+	if (char == "w" || char == "W"){
+		app.main.player.color = "blue";
+		app.main.player.img.src = "media/blueship.png";
+	}
+})
+	
+window.addEventListener("keyup",function(e){
+	console.log("keyup=" + e.keyCode);
+	myKeys.keydown[e.keyCode] = false;
+	
+	var char = String.fromCharCode(e.keyCode);
+	if (char == "q" || char == "Q"){
+		app.main.player.color = "red";
+		app.main.player.img.src = "media/redship.png";
+	}
+})	
+	
+window.addEventListener("keyup",function(e){
+	console.log("keyup=" + e.keyCode);
+	myKeys.keydown[e.keyCode] = false;
+	
+	var char = String.fromCharCode(e.keyCode);
+	if (char == "e" || char == "E"){
+		app.main.player.color = "orange";
+		app.main.player.img.src = "media/orangeship.png";
+	}
+})	
+	
+window.addEventListener("keyup",function(e){
+	console.log("keyup=" + e.keyCode);
+	myKeys.keydown[e.keyCode] = false;
+	
+	var char = String.fromCharCode(e.keyCode);
+	if (char == "r" || char == "R"){
+		app.main.player.color = "green";
+		app.main.player.img.src = "media/greenship.png";
+	}
+})	
 	
 window.addEventListener("keyup",function(e){
 	console.log("keyup=" + e.keyCode);

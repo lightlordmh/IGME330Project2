@@ -125,7 +125,8 @@ app.main = {
 		this.x = width/2;
 		this.y = height/2;
 		this.img = new Image();
-		this.img.src = 'media/ship.png';
+		this.img.src = 'media/redship.png';
+		this.color = "red";
 	},
 	
 	update: function(){
@@ -186,6 +187,11 @@ app.main = {
 		//player.x = event.clientX;
 		//player.y = event.clientY;
 		this.ctx.drawImage(this.player.img, this.player.x, this.player.y, 100, 100);
+		this.ctx.beginPath();
+		this.ctx.arc(this.player.x+50,this.player.y+50,75,0,2*Math.PI);
+		this.ctx.strokeStyle = this.player.color;
+		this.ctx.closePath();
+		this.ctx.stroke();
 	},
 	
 	fillText: function(ctx, string, x, y, css, color) {
