@@ -27,12 +27,10 @@ myKeys.keydown = [];
 
 // event listeners
 window.addEventListener("keydown",function(e){
-	console.log("keydown=" + e.keyCode);
 	myKeys.keydown[e.keyCode] = true;
 });
 
 window.addEventListener("keyup",function(e){
-	console.log("keyup=" + e.keyCode);
 	myKeys.keydown[e.keyCode] = false;
 	
 	var char = String.fromCharCode(e.keyCode);
@@ -44,7 +42,6 @@ window.addEventListener("keyup",function(e){
 })
 	
 window.addEventListener("keyup",function(e){
-	console.log("keyup=" + e.keyCode);
 	myKeys.keydown[e.keyCode] = false;
 	
 	var char = String.fromCharCode(e.keyCode);
@@ -56,11 +53,11 @@ window.addEventListener("keyup",function(e){
 	if (char == "q" || char == "Q" && app.main.gameover){
 		app.main.gameover = false;
 		app.main.menu = true;
+		app.main.init();
 	}
 })	
 	
 window.addEventListener("keyup",function(e){
-	console.log("keyup=" + e.keyCode);
 	myKeys.keydown[e.keyCode] = false;
 	
 	var char = String.fromCharCode(e.keyCode);
@@ -72,7 +69,6 @@ window.addEventListener("keyup",function(e){
 })	
 	
 window.addEventListener("keyup",function(e){
-	console.log("keyup=" + e.keyCode);
 	myKeys.keydown[e.keyCode] = false;
 	
 	var char = String.fromCharCode(e.keyCode);
@@ -84,7 +80,6 @@ window.addEventListener("keyup",function(e){
 })	
 	
 window.addEventListener("keyup",function(e){
-	console.log("keyup=" + e.keyCode);
 	myKeys.keydown[e.keyCode] = false;
 	
 	// pausing and resuming
@@ -99,7 +94,6 @@ window.addEventListener("keyup",function(e){
 })
 
 window.addEventListener("keyup",function(e){
-	console.log("keyup=" + e.keyCode);
 	myKeys.keydown[e.keyCode] = false;
 	
 	var char = String.fromCharCode(e.keyCode);
@@ -110,7 +104,6 @@ window.addEventListener("keyup",function(e){
 })
 
 window.addEventListener("keyup",function(e){
-	console.log("keyup=" + e.keyCode);
 	myKeys.keydown[e.keyCode] = false;
 	
 	var char = String.fromCharCode(e.keyCode);

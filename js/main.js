@@ -35,6 +35,8 @@ app.main = {
 	mouseY: undefined,
 	menuradius: undefined,
 	enemies: [],
+	enemytimer: 0,
+	enemylimit: 120,
     
 	// CIRCLE: Object.freeze( {
 	// 	NUM_CIRCLES_START: 5,
@@ -75,6 +77,7 @@ app.main = {
 	animationID: 0,
 	// colors: ["#FD5B78","#FF6037","#FF9966","#FFFF66","#66FF66","#50BFE6","#FF6EFF","#EE34D2"],
 	sound: undefined,
+	difficulty: undefined,
 	
     // methods
 	init : function() {
@@ -85,6 +88,9 @@ app.main = {
 		this.menuradius = 0;
 		this.totalScore = 0;
 		this.enemies = [];
+		this.enemytimer = 0;
+		this.enemylimit = 120;
+		this.difficulty = "Easy";
 		for (var i = 0; i < 10; i ++){
 			this.enemies.push(new this.Enemy(this.WIDTH, this.HEIGHT));
 		}
@@ -175,7 +181,9 @@ app.main = {
 	
 	Enemy: function(width, height){
 		this.side = Math.floor((Math.random()*4)+1); //return a random num between 1 & 4
+		this.colornum = Math.floor((Math.random()*4)+1); //return a random num between 1 & 4
 		this.state = true;
+		this.img = new Image();
 		if (this.side == 1){ //top
 			this.x = Math.floor((Math.random()*width)+1);
 			this.y = -50;
@@ -192,9 +200,22 @@ app.main = {
 			this.x = -50;
 			this.y = Math.floor((Math.random()*height)+1);
 		}
-		this.img = new Image();
-		this.img.src = 'media/redenemy.png';
-		this.color = "red";
+		if (this.colornum == 1){
+			this.color = "red";
+			this.img.src = 'media/redenemy.png';
+		}
+		if (this.colornum == 2){
+			this.color = "blue";
+			this.img.src = 'media/blueenemy.png';
+		}
+		if (this.colornum == 3){
+			this.color = "orange";
+			this.img.src = 'media/orangeenemy.png';
+		}
+		if (this.colornum == 4){
+			this.color = "green";
+			this.img.src = 'media/greenenemy.png';
+		}
 	},
 	
 	update: function(){
@@ -242,7 +263,7 @@ app.main = {
 		}
 	 	// 3) HOW MUCH TIME HAS GONE BY?
 	 	var dt = this.calculateDeltaTime();
-	 	 
+	 	console.log("Time passed: " +dt);
 	 	// 4) UPDATE
 	 	// move circles
 		//this.moveCircles(dt);
@@ -277,12 +298,6 @@ app.main = {
 			}
 		}
 		
-		// iv) draw debug info
-		if (this.debug){
-			// draw dt in bottom right corner
-			this.fillText(this.ctx, "dt: " + dt.toFixed(3), this.WIDTH - 150, this.HEIGHT - 10, "18pt courier", "white");
-		}
-		
 		if (this.instruct){
 			this.drawInstructScreen(this.ctx);
 		}
@@ -290,6 +305,26 @@ app.main = {
 			this.drawGameOverScreen(this.ctx);
 		}
 		if (this.game){
+			if (this.totalScore > 10){
+				this.difficulty = "Normal";
+				this.enemylimit = 60;
+			}
+			if (this.totalScore > 20){
+				this.difficulty = "Hard";
+				this.enemylimit = 45;
+			}
+			if (this.totalScore > 35){
+				this.difficulty = "Very Hard";
+				this.enemylimit = 30;
+			}
+			if (this.totalScore > 50){
+				this.difficulty = "Insane";
+				this.enemylimit = 15;
+			}
+			if (this.enemytimer > this.enemylimit){
+				this.enemies.push(new this.Enemy(this.WIDTH, this.HEIGHT));
+				this.enemytimer = 0;
+			}
 			for (var i = 0; i < this.enemies.length; i++){
 				var enemy = this.enemies[i];
 				if (enemy.state){
@@ -311,7 +346,6 @@ app.main = {
 						this.player.color = this.player.prevcolor;
 						this.player.state = "alive";
 				}
-				console.log("Hurt Timer: " +this.player.hurttimer);
 			}
 			this.drawHUD(this.ctx);
 			this.ctx.drawImage(this.player.img, this.player.x, this.player.y, 100, 100);
@@ -320,6 +354,7 @@ app.main = {
 			this.ctx.strokeStyle = this.player.color;
 			this.ctx.closePath();
 			this.ctx.stroke();
+			this.enemytimer ++;
 		}
 	},
 	
@@ -568,8 +603,9 @@ app.main = {
 		// draw score
       	// fillText(string, x, y, css, color)
 		var lives = this.player.lives +1;
-		this.fillText(this.ctx, "Lives Remaining: " + lives + " of " + "3", 20, 20, "14pt courier", "#ddd");
-		this.fillText(this.ctx, "Total Score: " + this.totalScore, this.WIDTH - 200, 20, "14pt courier", "#ddd");
+		this.fillText(this.ctx, "Lives Remaining: " + lives + " of " + "3", 20, 20, "20pt courier", "#ddd");
+		this.fillText(this.ctx, "Total Score: " + this.totalScore, this.WIDTH - 250, 20, "20pt courier", "#ddd");
+		this.fillText(this.ctx, "Difficulty: " + this.difficulty , 20, 60, "20pt courier", "#ddd");
 		
 		// if (this.gameState == this.GAME_STATE.DEFAULT){
 		// 	document.querySelector("#button1").style.display = "none";
