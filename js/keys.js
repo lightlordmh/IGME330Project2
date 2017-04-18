@@ -53,6 +53,10 @@ window.addEventListener("keyup",function(e){
 		app.main.player.color = "red";
 		app.main.player.img.src = "media/redship.png";
 	}
+	if (char == "q" || char == "Q" && app.main.gameover){
+		app.main.gameover = false;
+		app.main.menu = true;
+	}
 })	
 	
 window.addEventListener("keyup",function(e){

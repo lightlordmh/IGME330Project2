@@ -70,16 +70,11 @@ app.main = {
 	menu: true,
 	game: false,
 	paused: false,
+	gameover: false,
 	instruct: false,
 	animationID: 0,
 	// colors: ["#FD5B78","#FF6037","#FF9966","#FFFF66","#66FF66","#50BFE6","#FF6EFF","#EE34D2"],
 	sound: undefined,
-<<<<<<< HEAD
-=======
-	enemy: undefined,
-	lives: 3,
-
->>>>>>> a1bb5d5ad4326dd834b21df476e15c7b5484e69b
 	
     // methods
 	init : function() {
@@ -88,6 +83,8 @@ app.main = {
 		this.mouseX = 0;
 		this.mouseY = 0;
 		this.menuradius = 0;
+		this.totalScore = 0;
+		this.enemies = [];
 		for (var i = 0; i < 10; i ++){
 			this.enemies.push(new this.Enemy(this.WIDTH, this.HEIGHT));
 		}
@@ -289,8 +286,10 @@ app.main = {
 		if (this.instruct){
 			this.drawInstructScreen(this.ctx);
 		}
+		if (this.gameover){
+			this.drawGameOverScreen(this.ctx);
+		}
 		if (this.game){
-<<<<<<< HEAD
 			for (var i = 0; i < this.enemies.length; i++){
 				var enemy = this.enemies[i];
 				if (enemy.state){
@@ -305,34 +304,23 @@ app.main = {
 					i --;
 				}
 			}
-		}
-		if (this.player.state == "hurt"){
-			this.player.hurttimer += 1;
-				if (this.player.hurttimer > 120){
-					this.player.hurttimer = 0;
-					this.player.color = this.player.prevcolor;
-					this.player.state = "alive";
+			if (this.player.state == "hurt"){
+				this.player.hurttimer += 1;
+					if (this.player.hurttimer > 120){
+						this.player.hurttimer = 0;
+						this.player.color = this.player.prevcolor;
+						this.player.state = "alive";
+				}
+				console.log("Hurt Timer: " +this.player.hurttimer);
 			}
-			console.log("Hurt Timer: " +this.player.hurttimer);
-=======
-
-			this.ctx.drawImage(this.enemy.img, this.enemy.x, this.enemy.y, 80, 80);
+			this.drawHUD(this.ctx);
 			this.ctx.drawImage(this.player.img, this.player.x, this.player.y, 100, 100);
 			this.ctx.beginPath();
 			this.ctx.arc(this.player.x+50,this.player.y+50,75,0,2*Math.PI);
 			this.ctx.strokeStyle = this.player.color;
 			this.ctx.closePath();
 			this.ctx.stroke();
-			this.moveEnemy(this.enemy);
-			this.drawHUD(this.ctx);
->>>>>>> a1bb5d5ad4326dd834b21df476e15c7b5484e69b
 		}
-		this.ctx.drawImage(this.player.img, this.player.x, this.player.y, 100, 100);
-		this.ctx.beginPath();
-		this.ctx.arc(this.player.x+50,this.player.y+50,75,0,2*Math.PI);
-		this.ctx.strokeStyle = this.player.color;
-		this.ctx.closePath();
-		this.ctx.stroke();
 	},
 	
 	fillText: function(ctx, string, x, y, css, color) {
@@ -380,10 +368,6 @@ app.main = {
 			this.y += this.ySpeed * this.speed * dt;
 		};
 		var array = [];
-<<<<<<< HEAD
-=======
-		//debugger;
->>>>>>> a1bb5d5ad4326dd834b21df476e15c7b5484e69b
 		for(var i=0; i < num; i++){
 			var c = {};
 			c.x = getRandom(this.CIRCLE.START_RADIUS*2, this.WIDTH - this.CIRCLE.START_RADIUS*2);
@@ -521,6 +505,18 @@ app.main = {
 		this.fillText(this.ctx, "... PAUSED ...", this.WIDTH/2, this.HEIGHT/2, "40pt courier", "white");
 		ctx.restore();
 	},
+	
+	drawGameOverScreen: function(ctx){
+		ctx.save();
+		ctx.fillStyle = "black";
+		ctx.fillRect(0,0,this.WIDTH,this.HEIGHT);
+		ctx.textAlign = "center";
+		ctx.textBaselibe - "middle";
+		this.fillText(this.ctx, "GAME OVER", this.WIDTH/2, this.HEIGHT/2, "70pt courier", "white");
+		this.fillText(this.ctx, "Your score was: " +this.totalScore, this.WIDTH/2, this.HEIGHT/2 + 200, "40pt courier", "white");
+		this.fillText(this.ctx, "Press 'q' to go back to the main menu", this.WIDTH/2, this.HEIGHT/2 + 300, "40pt courier", "white");
+		ctx.restore();
+	},
     
 	// doMousedown: function(e){
 	// 	this.sound.playBGAudio();
@@ -571,7 +567,8 @@ app.main = {
 		ctx.save(); // NEW
 		// draw score
       	// fillText(string, x, y, css, color)
-		this.fillText(this.ctx, "Lives Remaining: " + this.lives + " of " + "3", 20, 20, "14pt courier", "#ddd");
+		var lives = this.player.lives +1;
+		this.fillText(this.ctx, "Lives Remaining: " + lives + " of " + "3", 20, 20, "14pt courier", "#ddd");
 		this.fillText(this.ctx, "Total Score: " + this.totalScore, this.WIDTH - 200, 20, "14pt courier", "#ddd");
 		
 		// if (this.gameState == this.GAME_STATE.DEFAULT){
@@ -610,6 +607,7 @@ app.main = {
 		var distance = Math.sqrt((xdif * xdif) + (ydif * ydif));
 		if (distance < 125 && this.player.color == enemy.color){
 			enemy.state = false;
+			this.totalScore += 1;
 		}
 		else if (distance < 125 && this.player.color != enemy.color){
 			this.player.state = "hurt";
@@ -619,7 +617,7 @@ app.main = {
 		}
 		if (this.player.lives < 0){
 			this.game = false;
-			this.menu = true;
+			this.gameover = true;
 		}
 	},
 	
