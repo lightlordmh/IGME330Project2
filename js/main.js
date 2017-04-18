@@ -305,6 +305,7 @@ app.main = {
 			this.drawGameOverScreen(this.ctx);
 		}
 		if (this.game){
+<<<<<<< HEAD
 			if (this.totalScore > 10){
 				this.difficulty = "Normal";
 				this.enemylimit = 60;
@@ -325,6 +326,9 @@ app.main = {
 				this.enemies.push(new this.Enemy(this.WIDTH, this.HEIGHT));
 				this.enemytimer = 0;
 			}
+=======
+			this.ctx.drawImage(this.enemy.img, this.enemy.x, this.enemy.y, 80, 80);
+>>>>>>> 2752e048dad9ef1c8e893ac91b673ce03cc76762
 			for (var i = 0; i < this.enemies.length; i++){
 				var enemy = this.enemies[i];
 				if (enemy.state){
@@ -644,12 +648,14 @@ app.main = {
 		if (distance < 125 && this.player.color == enemy.color){
 			enemy.state = false;
 			this.totalScore += 1;
+			this.playEffect();
 		}
 		else if (distance < 125 && this.player.color != enemy.color){
 			this.player.state = "hurt";
 			this.player.lives -= 1;
 			this.player.prevcolor = this.player.color;
 			this.player.color = "white";
+			this.playEffect();
 		}
 		if (this.player.lives < 0){
 			this.game = false;

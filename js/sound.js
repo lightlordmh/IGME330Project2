@@ -11,7 +11,7 @@ app.sound = (function(){
 	var effectAudio = undefined;
 	var currentEffect = 0;
 	var currentDirection = 1;
-	var effectSounds = ["1.mp3","2.mp3","3.mp3","4.mp3","5.mp3","6.mp3","7.mp3","8.mp3"];
+	var effectSounds = ["explosion.wav","explosion1.mp3","explosion2.mp3","explosion3.mp3","explosion4.mp3"];
 	
 
 	function init(){
