@@ -11,7 +11,7 @@ app.sound = (function(){
 	var effectAudio = undefined;
 	var currentEffect = 0;
 	var currentDirection = 1;
-	var effectSounds = ["1.mp3","2.mp3","3.mp3","4.mp3","5.mp3","6.mp3","7.mp3","8.mp3"];
+	var effectSounds = ["explosion.wav",];
 	
 
 	function init(){
@@ -26,14 +26,14 @@ app.sound = (function(){
 		bgAudio.currentTime = 0;
 	}
 	
-	function playEffect(){
-		effectAudio.src = "media/" + effectSounds[currentEffect];
+	function playEffect(input){
+		effectAudio.src = "media/" + effectSounds[input];
 		effectAudio.play();
-		currentEffect += currentDirection;
-		if (currentEffect == effectSounds.length || currentEffect == -1){
-			currentDirection *= -1;
-			currentEffect += currentDirection;
-		}
+		// currentEffect += currentDirection;
+		// if (currentEffect == effectSounds.length || currentEffect == -1){
+		// 	currentDirection *= -1;
+		// 	currentEffect += currentDirection;
+		// }
 	}
 	
 	function playBGAudio(){

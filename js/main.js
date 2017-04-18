@@ -280,7 +280,6 @@ app.main = {
 			this.drawInstructScreen(this.ctx);
 		}
 		if (this.game){
-
 			this.ctx.drawImage(this.enemy.img, this.enemy.x, this.enemy.y, 80, 80);
 			this.ctx.drawImage(this.player.img, this.player.x, this.player.y, 100, 100);
 			this.ctx.beginPath();
