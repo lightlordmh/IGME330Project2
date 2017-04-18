@@ -35,17 +35,17 @@ app.main = {
 	mouseY: undefined,
 	menuradius: undefined,
     
-	CIRCLE: Object.freeze( {
-		NUM_CIRCLES_START: 5,
-		NUM_CIRCLES_END : 20,
-		START_RADIUS : 8,
-		MAX_RADIUS : 45,
-		MIN_RADIUS : 2,
-		MAX_LIFETIME : 2.5,
-		MAX_SPEED : 80,
-		EXPLOSION_SPEED : 60,
-		IMPLOSION_SPEED : 84,
-	}),
+	// CIRCLE: Object.freeze( {
+	// 	NUM_CIRCLES_START: 5,
+	// 	NUM_CIRCLES_END : 20,
+	// 	START_RADIUS : 8,
+	// 	MAX_RADIUS : 45,
+	// 	MIN_RADIUS : 2,
+	// 	MAX_LIFETIME : 2.5,
+	// 	MAX_SPEED : 80,
+	// 	EXPLOSION_SPEED : 60,
+	// 	IMPLOSION_SPEED : 84,
+	// }),
 	
 	
 	GAME_STATE: Object.freeze( { // another fake enumeration
@@ -57,20 +57,20 @@ app.main = {
 		END : 5
 	}),
 	
-	CIRCLE_STATE: Object.freeze({
-		NORMAL: 0,
-		EXPLODING: 1,
-		MAX_SIZE: 2,
-		IMPLODING: 3,
-		DONE: 4,
-	}),
-	circles: [],
-	numCircles: this.NUM_CIRCLES_START,
+	// CIRCLE_STATE: Object.freeze({
+	// 	NORMAL: 0,
+	// 	EXPLODING: 1,
+	// 	MAX_SIZE: 2,
+	// 	IMPLODING: 3,
+	// 	DONE: 4,
+	// }),
+	// circles: [],
+	// numCircles: this.NUM_CIRCLES_START,
 	menu: true,
 	game: false,
 	paused: false,
 	animationID: 0,
-	colors: ["#FD5B78","#FF6037","#FF9966","#FFFF66","#66FF66","#50BFE6","#FF6EFF","#EE34D2"],
+	// colors: ["#FD5B78","#FF6037","#FF9966","#FFFF66","#66FF66","#50BFE6","#FF6EFF","#EE34D2"],
 	sound: undefined,
 	
     // methods
@@ -84,20 +84,24 @@ app.main = {
 		this.canvas.width = this.WIDTH;
 		this.canvas.height = this.HEIGHT;
 		this.ctx = this.canvas.getContext('2d');
-		this.player = new this.Player(this.WIDTH, this.HEIGHT);
-		this.canvas.addEventListener("mousemove", this.player.movePlayer);
+		this.player = new this.Player(this.WIDTH, this.HEIGHT); //setup the player
+		this.canvas.addEventListener("mousemove", this.player.movePlayer); //link the mouse to the player moving 
 		
+		//setting up sound effects
 		this.bgAudio = document.querySelector("#bgAudio");
 		this.bgAudio.volume = 0.25;
 		this.effectAudio = document.querySelector("#effectAudio");
 		this.effectAudio.volume = 0.3;
 		
+		//particles setup (Possible to be removed)
 		this.exhaust = new this.Emitter();
 		this.exhaust.numParticles = 100;
 		this.exhaust.red = 255;
 		this.exhaust.green = 150;
 		this.exhaust.createParticles({x:100,y:100});
 		
+		//setup pulsar particles
+		//use for enemy distruction
 		this.pulsar = new this.Emitter();
 		this.pulsar.red=255;
 		this.pulsar.minXspeed=this.pulsar.minYspeed=-0.25;
@@ -112,11 +116,11 @@ app.main = {
 		this.pulsar.createParticles({x:540,y:100});
 		
 		// start the game loop
-		this.numCircles = this.CIRCLE.NUM_CIRCLES_START;
-		this.circles = this.makeCircles(this.numCircles);
+		// this.numCircles = this.CIRCLE.NUM_CIRCLES_START;
+		// this.circles = this.makeCircles(this.numCircles);
 		console.log("this.circles = " +this.circles);
 		this.gameState = this.GAME_STATE.BEGIN;
-		this.canvas.onmousedown = this.doMousedown.bind(this);
+		//this.canvas.onmousedown = this.doMousedown.bind(this);
 		this.canvas.onmousemove = this.movePlayer.bind(this);
 		this.reset();
 		this.update();
@@ -185,7 +189,7 @@ app.main = {
 	 	 
 	 	// 4) UPDATE
 	 	// move circles
-		this.moveCircles(dt);
+		//this.moveCircles(dt);
 		this.checkForCollisions();
 		//if circle leaves the screen
 		if (this.circleHitLeftRight(this)){
@@ -325,47 +329,47 @@ app.main = {
 		}
 	},
 	
-	moveCircles: function(dt){
-		for(var i=0;i<this.circles.length; i++){
-			var c = this.circles[i];
-			if(c.state === this.CIRCLE_STATE.DONE) continue;
-			if(c.state === this.CIRCLE_STATE.EXPLODING){
-				c.radius += this.CIRCLE.EXPLOSION_SPEED  * dt;
-				if (c.radius >= this.CIRCLE.MAX_RADIUS){
-					c.state = this.CIRCLE_STATE.MAX_SIZE;
-					console.log("circle #" + i + " hit CIRCLE.MAX_RADIUS");
-				}
-				continue;
-			}
+	// moveCircles: function(dt){
+	// 	for(var i=0;i<this.circles.length; i++){
+	// 		var c = this.circles[i];
+	// 		if(c.state === this.CIRCLE_STATE.DONE) continue;
+	// 		if(c.state === this.CIRCLE_STATE.EXPLODING){
+	// 			c.radius += this.CIRCLE.EXPLOSION_SPEED  * dt;
+	// 			if (c.radius >= this.CIRCLE.MAX_RADIUS){
+	// 				c.state = this.CIRCLE_STATE.MAX_SIZE;
+	// 				console.log("circle #" + i + " hit CIRCLE.MAX_RADIUS");
+	// 			}
+	// 			continue;
+	// 		}
 		
-			if(c.state === this.CIRCLE_STATE.MAX_SIZE){
-				c.lifetime += dt; // lifetime is in seconds
-				if (c.lifetime >= this.CIRCLE.MAX_LIFETIME){
-					c.state = this.CIRCLE_STATE.IMPLODING;
-					console.log("circle #" + i + " hit CIRCLE.MAX_LIFETIME");
-				}
-				continue;
-			}
+	// 		if(c.state === this.CIRCLE_STATE.MAX_SIZE){
+	// 			c.lifetime += dt; // lifetime is in seconds
+	// 			if (c.lifetime >= this.CIRCLE.MAX_LIFETIME){
+	// 				c.state = this.CIRCLE_STATE.IMPLODING;
+	// 				console.log("circle #" + i + " hit CIRCLE.MAX_LIFETIME");
+	// 			}
+	// 			continue;
+	// 		}
 				
-			if(c.state === this.CIRCLE_STATE.IMPLODING){
-				c.radius -= this.CIRCLE.IMPLOSION_SPEED * dt;
-				if (c.radius <= this.CIRCLE.MIN_RADIUS){
-					console.log("circle #" + i + " hit CIRCLE.MIN_RADIUS and is gone");
-					c.state = this.CIRCLE_STATE.DONE;
-					continue;
-				}
+	// 		if(c.state === this.CIRCLE_STATE.IMPLODING){
+	// 			c.radius -= this.CIRCLE.IMPLOSION_SPEED * dt;
+	// 			if (c.radius <= this.CIRCLE.MIN_RADIUS){
+	// 				console.log("circle #" + i + " hit CIRCLE.MIN_RADIUS and is gone");
+	// 				c.state = this.CIRCLE_STATE.DONE;
+	// 				continue;
+	// 			}
 			
-			}
+	// 		}
 		
-			// move circles
-			c.move(dt);
+	// 		// move circles
+	// 		c.move(dt);
 		
-			// did circles leave screen?
-			if(this.circleHitLeftRight(c)) c.xSpeed *= -1;
- 			if(this.circleHitTopBottom(c)) c.ySpeed *= -1;
+	// 		// did circles leave screen?
+	// 		if(this.circleHitLeftRight(c)) c.xSpeed *= -1;
+ 	// 		if(this.circleHitTopBottom(c)) c.ySpeed *= -1;
 	
-		} // end for loop
-	},
+	// 	} // end for loop
+	// },
 	
 	drawMenuScreen: function(ctx){
 		ctx.save();
@@ -394,55 +398,51 @@ app.main = {
 		ctx.restore();
 	},
     
-	doMousedown: function(e){
-		this.sound.playBGAudio();
-		if (this.paused){
-			this.paused = false;
-			this.update();
-			return;
-		};
-		if(this.gameState == this.GAME_STATE.EXPLODING)return;
-		/*if(this.gameState == this.GAME_STATE.ROUND_OVER){
-			this.gameState = this.GAME_STATE.DEFAULT;
-			this.reset();
-			return;
-		}*/
-		console.log("e=" + e);
-		console.log("e.target=" + e.target);
-		console.log("this=" + this);
-		console.log("e.pageX=" +e.pageX);
-		console.log("e.pageY=" +e.pageY);
-		var mouse = getMouse(e);
-		console.log("(mouse.x, mouse.y)" + mouse.x + "," + mouse.y);
-		mouse = getMouse(e);
-		var rect = {x:295,y:215,width:50,height:50};
-		if(this.gameState == this.GAME_STATE.ROUND_OVER && rectangleContainsPoint(rect,mouse)){
-			console.log("YELLOW BYTTON PRESSED");
-			this.gameState = this.GAME_STATE.DEFAULT;
-			this.reset();
-			return;
-		}	
-		app.main.checkCircleClicked(mouse);
-	},
+	// doMousedown: function(e){
+	// 	this.sound.playBGAudio();
+	// 	if (this.paused){
+	// 		this.paused = false;
+	// 		this.update();
+	// 		return;
+	// 	};
+	// 	if(this.gameState == this.GAME_STATE.EXPLODING)return;
+	// 	/*if(this.gameState == this.GAME_STATE.ROUND_OVER){
+	// 		this.gameState = this.GAME_STATE.DEFAULT;
+	// 		this.reset();
+	// 		return;
+	// 	}*/
+	// 	console.log("e=" + e);
+	// 	console.log("e.target=" + e.target);
+	// 	console.log("this=" + this);
+	// 	console.log("e.pageX=" +e.pageX);
+	// 	console.log("e.pageY=" +e.pageY);
+	// 	var mouse = getMouse(e);
+	// 	console.log("(mouse.x, mouse.y)" + mouse.x + "," + mouse.y);
+	// 	mouse = getMouse(e);
+	// 	var rect = {x:295,y:215,width:50,height:50};
+	// 	if(this.gameState == this.GAME_STATE.ROUND_OVER && rectangleContainsPoint(rect,mouse)){
+	// 		console.log("YELLOW BYTTON PRESSED");
+	// 		this.gameState = this.GAME_STATE.DEFAULT;
+	// 		this.reset();
+	// 		return;
+	// 	}	
+	// 	app.main.checkCircleClicked(mouse);
+	// },
 	
-	checkCircleClicked: function(mouse){
-		for(var i = this.circles.length-1; i >= 0; i-- ){
-			var c = this.circles[i];
-			if (pointInsideCircle(mouse.x, mouse.y, c)){
-				c.xSpeed = c.ySpeed = 0;
-				c.state = this.CIRCLE_STATE.EXPLODING;
-				this.gameState = this.GAME_STATE.EXPLODING;
-				this.roundScore ++;
-				this.sound.playEffect();
-				break;
-			}
-		}
-	},
-	
-	checkForCollisions: function(){
-		//TODO
-	},
-	
+	// checkCircleClicked: function(mouse){
+	// 	for(var i = this.circles.length-1; i >= 0; i-- ){
+	// 		var c = this.circles[i];
+	// 		if (pointInsideCircle(mouse.x, mouse.y, c)){
+	// 			c.xSpeed = c.ySpeed = 0;
+	// 			c.state = this.CIRCLE_STATE.EXPLODING;
+	// 			this.gameState = this.GAME_STATE.EXPLODING;
+	// 			this.roundScore ++;
+	// 			this.sound.playEffect();
+	// 			break;
+	// 		}
+	// 	}
+	// },
+		
 	drawHUD: function(ctx){
 		ctx.save(); // NEW
 		// draw score
