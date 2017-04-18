@@ -86,14 +86,11 @@ app.main = {
 		this.canvas.width = this.WIDTH;
 		this.canvas.height = this.HEIGHT;
 		this.ctx = this.canvas.getContext('2d');
-<<<<<<< HEAD
 		this.player = new this.Player(this.WIDTH, this.HEIGHT);
 		this.enemy = new this.Enemy(this.WIDTH, this.HEIGHT);
 		this.canvas.addEventListener("mousemove", this.player.movePlayer);
-=======
 		this.player = new this.Player(this.WIDTH, this.HEIGHT); //setup the player
 		this.canvas.addEventListener("mousemove", this.player.movePlayer); //link the mouse to the player moving 
->>>>>>> a98d9366544fdce917437ffb7c0ea71adc4f03c7
 		
 		//setting up sound effects
 		this.bgAudio = document.querySelector("#bgAudio");
