@@ -290,7 +290,6 @@ app.main = {
 			this.drawGameOverScreen(this.ctx);
 		}
 		if (this.game){
-			this.ctx.drawImage(this.enemy.img, this.enemy.x, this.enemy.y, 80, 80);
 			for (var i = 0; i < this.enemies.length; i++){
 				var enemy = this.enemies[i];
 				if (enemy.state){
@@ -607,16 +606,17 @@ app.main = {
 		var ydif = this.player.y - enemy.y;
 		var distance = Math.sqrt((xdif * xdif) + (ydif * ydif));
 		if (distance < 125 && this.player.color == enemy.color){
+			this.sound.playEffect();
 			enemy.state = false;
 			this.totalScore += 1;
-			this.playEffect();
+
 		}
 		else if (distance < 125 && this.player.color != enemy.color){
 			this.player.state = "hurt";
 			this.player.lives -= 1;
 			this.player.prevcolor = this.player.color;
 			this.player.color = "white";
-			this.playEffect();
+			this.sound.playEffect();
 		}
 		if (this.player.lives < 0){
 			this.game = false;
@@ -643,16 +643,7 @@ app.main = {
 	},
 	
 	
-	playEffect: function (){
-		this.effectAudio.src = "media/" + this.effectSounds[this.currentEffect];
-		this.effectAudio.play();
-		
-		this.currentEffect += this.currentDirection;
-		if (this.currentEffect == this.effectSounds.length || this.currentEffect == -1){
-			this.currentDirection *= -1;
-			this.currentEffect += this.currentDirection;
-		}
-	},
+
 	
 	reset: function(){
 		this.numCircles += 5;
