@@ -89,5 +89,28 @@ window.addEventListener("keyup",function(e){
 		}
 	}
 })
+
+window.addEventListener("keyup",function(e){
+	console.log("keyup=" + e.keyCode);
+	myKeys.keydown[e.keyCode] = false;
+	
+	var char = String.fromCharCode(e.keyCode);
+	if (char == "e" || char == "E" && app.main.menu){
+		app.main.menu = false;
+		app.main.instruct = true;
+	}
+})
+
+window.addEventListener("keyup",function(e){
+	console.log("keyup=" + e.keyCode);
+	myKeys.keydown[e.keyCode] = false;
+	
+	var char = String.fromCharCode(e.keyCode);
+	if (char == "q" || char == "Q" && app.main.instruct){
+		app.main.instruct = false;
+		app.main.menu = true;
+	}
+})	
+	
 return myKeys;
 }() //end IIFE

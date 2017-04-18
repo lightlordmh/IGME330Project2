@@ -69,9 +69,11 @@ app.main = {
 	menu: true,
 	game: false,
 	paused: false,
+	instruct: false,
 	animationID: 0,
 	colors: ["#FD5B78","#FF6037","#FF9966","#FFFF66","#66FF66","#50BFE6","#FF6EFF","#EE34D2"],
 	sound: undefined,
+	enemy: undefined,
 	
     // methods
 	init : function() {
@@ -85,6 +87,7 @@ app.main = {
 		this.canvas.height = this.HEIGHT;
 		this.ctx = this.canvas.getContext('2d');
 		this.player = new this.Player(this.WIDTH, this.HEIGHT);
+		this.enemy = new this.Enemy(this.WIDTH, this.HEIGHT);
 		this.canvas.addEventListener("mousemove", this.player.movePlayer);
 		
 		this.bgAudio = document.querySelector("#bgAudio");
@@ -131,11 +134,49 @@ app.main = {
 	},
 	
 	Player: function(width, height){
-		//var mouse = getMouse(e);
 		this.x = width/2;
 		this.y = height/2;
 		this.img = new Image();
 		this.img.src = 'media/redship.png';
+		this.color = "red";
+	},
+	
+	moveEnemy: function(enemy){
+		if (enemy.side == 1){//top
+			enemy.y ++;
+		}
+		if (enemy.side == 2){//right
+			enemy.x --;
+		}
+		if (enemy.side == 3){//bottom
+			enemy.y --;
+		}
+		if (enemy.side == 4){//left
+			enemy.x ++;
+		}
+		console.log("Enemy Pos: (" +enemy.x+ ", " +enemy.y+ ")");
+	},
+	
+	Enemy: function(width, height){
+		this.side = Math.floor((Math.random()*4)+1); //return a random num between 1 & 4
+		if (this.side == 1){ //top
+			this.x = Math.floor((Math.random()*width)+1);
+			this.y = -50;
+		}
+		if (this.side == 2){ //right
+			this.x = width+50;
+			this.y = Math.floor((Math.random()*height)+1);
+		}
+		if (this.side == 3){ //bottom
+			this.x = Math.floor((Math.random()*width)+1);
+			this.y = height+50;
+		}
+		if (this.side == 4){ //left
+			this.x = -50;
+			this.y = Math.floor((Math.random()*height)+1);
+		}
+		this.img = new Image();
+		this.img.src = 'media/redenemy.png';
 		this.color = "red";
 	},
 	
@@ -172,12 +213,12 @@ app.main = {
 				}
 			}
 			this.ctx.strokeStyle = "white";
-				this.ctx.fillStyle = "white";
-				this.ctx.beginPath();
-				this.ctx.arc((this.WIDTH/2), (this.HEIGHT/2) + 100, this.menuradius, 0, 2*Math.PI);
-				this.ctx.fill();
-				this.ctx.closePath();
-			console.log("Radius: " +this.menuradius);
+			this.ctx.fillStyle = "white";
+			this.ctx.beginPath();
+			this.ctx.arc((this.WIDTH/2), (this.HEIGHT/2) + 100, this.menuradius, 0, 2*Math.PI);
+			this.ctx.fill();
+			this.ctx.closePath();
+			//console.log("Radius: " +this.menuradius);
 			return;
 		}
 	 	// 3) HOW MUCH TIME HAS GONE BY?
@@ -221,14 +262,20 @@ app.main = {
 			// draw dt in bottom right corner
 			this.fillText(this.ctx, "dt: " + dt.toFixed(3), this.WIDTH - 150, this.HEIGHT - 10, "18pt courier", "white");
 		}
-
+		
+		if (this.instruct){
+			this.drawInstructScreen(this.ctx);
+		}
+		
 		if (this.game){
+			this.ctx.drawImage(this.enemy.img, this.enemy.x, this.enemy.y, 80, 80);
 			this.ctx.drawImage(this.player.img, this.player.x, this.player.y, 100, 100);
 			this.ctx.beginPath();
 			this.ctx.arc(this.player.x+50,this.player.y+50,75,0,2*Math.PI);
 			this.ctx.strokeStyle = this.player.color;
 			this.ctx.closePath();
 			this.ctx.stroke();
+			this.moveEnemy(this.enemy);
 		}
 	},
 	
@@ -375,12 +422,34 @@ app.main = {
 		ctx.textBaselibe - "middle";
 		this.fillText(this.ctx, "Knockoffaruga", this.WIDTH/2, this.HEIGHT/2 - 200, "70pt courier", "white");
 		this.fillText(this.ctx, "Hold mouse in the circle to start", this.WIDTH/2, this.HEIGHT/2 - 100, "40pt courier", "white");
+		this.fillText(this.ctx, "Press 'e' to go to the instructions", this.WIDTH/2, this.HEIGHT/2 + 300, "30pt courier", "white");
 		ctx.beginPath();
 		ctx.strokeStyle = "white";
 		ctx.arc((this.WIDTH/2), (this.HEIGHT/2) + 100, 100, 0, 2*Math.PI);
 		ctx.closePath();
 		ctx.fill();
 		ctx.stroke();
+		ctx.restore();
+	},
+	
+	drawInstructScreen: function(ctx){
+		console.log("Instructions: " +this.instruct);
+		ctx.save();
+		ctx.fillStyle = "black";
+		ctx.fillRect(0,0,this.WIDTH,this.HEIGHT);
+		ctx.textAlign = "center";
+		ctx.textBaselibe - "middle";
+		this.fillText(this.ctx, "Instructions", this.WIDTH/2, this.HEIGHT/2 - 250, "70pt courier", "white");
+		this.fillText(this.ctx, "Control the ship with the mouse", this.WIDTH/2, this.HEIGHT/2 - 150, "30pt courier", "white");
+		this.fillText(this.ctx, "Match the color of your ship with incoming enemies to destroy them", this.WIDTH/2, this.HEIGHT/2 - 100, "30pt courier", "white");
+		this.fillText(this.ctx, "Change color with the Q, W, E & R keys", this.WIDTH/2, this.HEIGHT/2 - 50, "30pt courier", "white");
+		this.fillText(this.ctx, "Q -> Red", this.WIDTH/2 - 550, this.HEIGHT/2 + 50, "40pt courier", "red");
+		this.fillText(this.ctx, "W -> Blue", this.WIDTH/2 - 200, this.HEIGHT/2 + 50, "40pt courier", "blue");
+		this.fillText(this.ctx, "E -> Orange", this.WIDTH/2 + 170, this.HEIGHT/2 + 50, "40pt courier", "orange");
+		this.fillText(this.ctx, "R -> Green", this.WIDTH/2 + 560, this.HEIGHT/2 + 50, "40pt courier", "green");
+		this.fillText(this.ctx, "You have 3 lives", this.WIDTH/2, this.HEIGHT/2 + 150, "30pt courier", "white");
+		this.fillText(this.ctx, "Increase your score by staying alive and destroying enemies", this.WIDTH/2, this.HEIGHT/2 + 200, "30pt courier", "white");
+		this.fillText(this.ctx, "Press 'q' to return to the main menu", this.WIDTH/2, this.HEIGHT/2 + 300, "30pt courier", "white");
 		ctx.restore();
 	},
 	
