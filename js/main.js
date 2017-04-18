@@ -167,6 +167,7 @@ app.main = {
 					this.menuradius = 0;
 					this.menu = false;
 					this.game = true;
+					this.sound.playBGAudio();
 				}
 			}
 			else{
