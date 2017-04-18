@@ -74,6 +74,8 @@ app.main = {
 	// colors: ["#FD5B78","#FF6037","#FF9966","#FFFF66","#66FF66","#50BFE6","#FF6EFF","#EE34D2"],
 	sound: undefined,
 	enemy: undefined,
+	lives: 3,
+
 	
     // methods
 	init : function() {
@@ -92,6 +94,8 @@ app.main = {
 		this.player = new this.Player(this.WIDTH, this.HEIGHT); //setup the player
 		this.canvas.addEventListener("mousemove", this.player.movePlayer); //link the mouse to the player moving 
 		
+		//setup background image
+
 		//setting up sound effects
 		this.bgAudio = document.querySelector("#bgAudio");
 		this.bgAudio.volume = 0.25;
@@ -203,6 +207,7 @@ app.main = {
 			var xdif = (this.mouseX-(this.WIDTH/2));
 			var ydif = (this.mouseY-(this.HEIGHT/2 + 100));
 			var distance = Math.sqrt((xdif*xdif) +(ydif*ydif));
+
 			//console.log("Distance: " +distance);
 			if (distance < 100){
 				this.menuradius += 1;
@@ -249,7 +254,7 @@ app.main = {
 		// i) draw background
 		this.ctx.fillStyle = "black"; 
 		this.ctx.fillRect(0,0,this.WIDTH,this.HEIGHT); 
-	
+
 		// ii) draw circles
 		/*this.ctx.globalAlpha = 0.9;
 		this.drawCircles(this.ctx);
@@ -257,6 +262,7 @@ app.main = {
 		this.ctx.globalAlpha = 1.0;
 		this.drawHUD(this.ctx);
 		*/
+
 		if (this.gameState == this.GAME_STATE.BEGIN || this.gameState == this.GAME_STATE.ROUND_OVER){
 			if (this.myKeys.keydown[this.myKeys.KEYBOARD.KEY_UP] && this.myKeys.keydown[this.myKeys.KEYBOARD.KEY_SHIFT]){
 				this.totalScore ++;
@@ -273,8 +279,8 @@ app.main = {
 		if (this.instruct){
 			this.drawInstructScreen(this.ctx);
 		}
-		
 		if (this.game){
+
 			this.ctx.drawImage(this.enemy.img, this.enemy.x, this.enemy.y, 80, 80);
 			this.ctx.drawImage(this.player.img, this.player.x, this.player.y, 100, 100);
 			this.ctx.beginPath();
@@ -283,6 +289,7 @@ app.main = {
 			this.ctx.closePath();
 			this.ctx.stroke();
 			this.moveEnemy(this.enemy);
+			this.drawHUD(this.ctx);
 		}
 	},
 	
@@ -519,35 +526,35 @@ app.main = {
 		ctx.save(); // NEW
 		// draw score
       	// fillText(string, x, y, css, color)
-		this.fillText(this.ctx, "This Round: " + this.roundScore + " of " + this.numCircles, 20, 20, "14pt courier", "#ddd");
+		this.fillText(this.ctx, "Lives Remaining: " + this.lives + " of " + "3", 20, 20, "14pt courier", "#ddd");
 		this.fillText(this.ctx, "Total Score: " + this.totalScore, this.WIDTH - 200, 20, "14pt courier", "#ddd");
 		
-		if (this.gameState == this.GAME_STATE.DEFAULT){
-			document.querySelector("#button1").style.display = "none";
-		}
+		// if (this.gameState == this.GAME_STATE.DEFAULT){
+		// 	document.querySelector("#button1").style.display = "none";
+		// }
 		
-		// NEW
-		if(this.gameState == this.GAME_STATE.BEGIN){
-			ctx.textAlign = "center";
-			ctx.textBaseline = "middle";
-			this.fillText(this.ctx, "To begin, click a circle", this.WIDTH/2, this.HEIGHT/2, "30pt courier", "white");
-			document.querySelector("#button1").style.display = "none";
-			this.exhaust.updateAndDraw(this.ctx,{x:100,y:100});
-			this.pulsar.updateAndDraw(this.ctx,{x:540,y:100});
-		} // end if
+		// // NEW
+		// if(this.gameState == this.GAME_STATE.BEGIN){
+		// 	ctx.textAlign = "center";
+		// 	ctx.textBaseline = "middle";
+		// 	this.fillText(this.ctx, "To begin, click a circle", this.WIDTH/2, this.HEIGHT/2, "30pt courier", "white");
+		// 	document.querySelector("#button1").style.display = "none";
+		// 	this.exhaust.updateAndDraw(this.ctx,{x:100,y:100});
+		// 	this.pulsar.updateAndDraw(this.ctx,{x:540,y:100});
+		// } // end if
 	
-		// NEW
-		if(this.gameState == this.GAME_STATE.ROUND_OVER){
-			ctx.save();
-			ctx.textAlign = "center";
-			ctx.textBaseline = "middle";
-			this.fillText(this.ctx, "Round Over", this.WIDTH/2, this.HEIGHT/2 - 40, "30pt courier", "red");
-			this.fillText(this.ctx, "Click to continue", this.WIDTH/2, this.HEIGHT/2, "30pt courier", "red");
-			this.fillText(this.ctx, "Next round there are " + (this.numCircles + 5) + " circles", this.WIDTH/2 , this.HEIGHT/2 + 35, "20pt courier", "#ddd");
-			document.querySelector("#button1").style.display = "inline";
-			ctx.fillStyle = "yellow";
-			ctx.fillRect(295,215,50,50);
-		} // end if
+		// // NEW
+		// if(this.gameState == this.GAME_STATE.ROUND_OVER){
+		// 	ctx.save();
+		// 	ctx.textAlign = "center";
+		// 	ctx.textBaseline = "middle";
+		// 	this.fillText(this.ctx, "Round Over", this.WIDTH/2, this.HEIGHT/2 - 40, "30pt courier", "red");
+		// 	this.fillText(this.ctx, "Click to continue", this.WIDTH/2, this.HEIGHT/2, "30pt courier", "red");
+		// 	this.fillText(this.ctx, "Next round there are " + (this.numCircles + 5) + " circles", this.WIDTH/2 , this.HEIGHT/2 + 35, "20pt courier", "#ddd");
+		// 	document.querySelector("#button1").style.display = "inline";
+		// 	ctx.fillStyle = "yellow";
+		// 	ctx.fillRect(295,215,50,50);
+		// } // end if
 		ctx.restore(); // NEW
 	},
 	
