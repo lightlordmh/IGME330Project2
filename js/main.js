@@ -609,12 +609,14 @@ app.main = {
 		if (distance < 125 && this.player.color == enemy.color){
 			enemy.state = false;
 			this.totalScore += 1;
+			this.playEffect();
 		}
 		else if (distance < 125 && this.player.color != enemy.color){
 			this.player.state = "hurt";
 			this.player.lives -= 1;
 			this.player.prevcolor = this.player.color;
 			this.player.color = "white";
+			this.playEffect();
 		}
 		if (this.player.lives < 0){
 			this.game = false;
