@@ -290,9 +290,7 @@ app.main = {
 			this.drawGameOverScreen(this.ctx);
 		}
 		if (this.game){
-<<<<<<< HEAD
 			this.ctx.drawImage(this.enemy.img, this.enemy.x, this.enemy.y, 80, 80);
-=======
 			for (var i = 0; i < this.enemies.length; i++){
 				var enemy = this.enemies[i];
 				if (enemy.state){
@@ -317,7 +315,6 @@ app.main = {
 				console.log("Hurt Timer: " +this.player.hurttimer);
 			}
 			this.drawHUD(this.ctx);
->>>>>>> afed411a631dcdf9508e745a5faaa9586411cdb9
 			this.ctx.drawImage(this.player.img, this.player.x, this.player.y, 100, 100);
 			this.ctx.beginPath();
 			this.ctx.arc(this.player.x+50,this.player.y+50,75,0,2*Math.PI);
