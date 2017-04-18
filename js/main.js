@@ -31,6 +31,9 @@ app.main = {
 	pulsar: undefined,
 	exhaust: undefined,
 	player: undefined,
+	mouseX: undefined,
+	mouseY: undefined,
+	menuradius: undefined,
     
 	CIRCLE: Object.freeze( {
 		NUM_CIRCLES_START: 5,
@@ -63,6 +66,8 @@ app.main = {
 	}),
 	circles: [],
 	numCircles: this.NUM_CIRCLES_START,
+	menu: true,
+	game: false,
 	paused: false,
 	animationID: 0,
 	colors: ["#FD5B78","#FF6037","#FF9966","#FFFF66","#66FF66","#50BFE6","#FF6EFF","#EE34D2"],
@@ -72,6 +77,9 @@ app.main = {
 	init : function() {
 		console.log("app.main.init() called");
 		// initialize properties
+		this.mouseX = 0;
+		this.mouseY = 0;
+		this.menuradius = 0;
 		this.canvas = document.querySelector('canvas');
 		this.canvas.width = this.WIDTH;
 		this.canvas.height = this.HEIGHT;
@@ -116,6 +124,8 @@ app.main = {
 	
 	movePlayer: function(e){
 		var mouse = getMouse(e);
+		this.mouseX = mouse.x;
+		this.mouseY = mouse.y;
 		this.player.x = mouse.x-50;
 		this.player.y = mouse.y-50;
 	},
@@ -138,6 +148,36 @@ app.main = {
 	 	// if so, bail out of loop
 	 	if (this.paused){
 			this.drawPauseScreen(this.ctx);
+			return;
+		}
+		//ctx.arc((this.WIDTH/2), (this.HEIGHT/2) + 100, 100, 0, 2*Math.PI);
+		if (this.menu){
+			this.drawMenuScreen(this.ctx);
+			var xdif = (this.mouseX-(this.WIDTH/2));
+			var ydif = (this.mouseY-(this.HEIGHT/2 + 100));
+			var distance = Math.sqrt((xdif*xdif) +(ydif*ydif));
+			//console.log("Distance: " +distance);
+			if (distance < 100){
+				this.menuradius += 1;
+				if (this.menuradius > 100){
+					this.menuradius = 0;
+					this.menu = false;
+					this.game = true;
+				}
+			}
+			else{
+				this.menuradius -= 1;
+				if (this.menuradius < 0){
+					this.menuradius = 0;
+				}
+			}
+			this.ctx.strokeStyle = "white";
+				this.ctx.fillStyle = "white";
+				this.ctx.beginPath();
+				this.ctx.arc((this.WIDTH/2), (this.HEIGHT/2) + 100, this.menuradius, 0, 2*Math.PI);
+				this.ctx.fill();
+				this.ctx.closePath();
+			console.log("Radius: " +this.menuradius);
 			return;
 		}
 	 	// 3) HOW MUCH TIME HAS GONE BY?
@@ -181,17 +221,15 @@ app.main = {
 			// draw dt in bottom right corner
 			this.fillText(this.ctx, "dt: " + dt.toFixed(3), this.WIDTH - 150, this.HEIGHT - 10, "18pt courier", "white");
 		}
-		console.log(this.player.x);
-		console.log(this.player.y);
-		
-		//player.x = event.clientX;
-		//player.y = event.clientY;
-		this.ctx.drawImage(this.player.img, this.player.x, this.player.y, 100, 100);
-		this.ctx.beginPath();
-		this.ctx.arc(this.player.x+50,this.player.y+50,75,0,2*Math.PI);
-		this.ctx.strokeStyle = this.player.color;
-		this.ctx.closePath();
-		this.ctx.stroke();
+
+		if (this.game){
+			this.ctx.drawImage(this.player.img, this.player.x, this.player.y, 100, 100);
+			this.ctx.beginPath();
+			this.ctx.arc(this.player.x+50,this.player.y+50,75,0,2*Math.PI);
+			this.ctx.strokeStyle = this.player.color;
+			this.ctx.closePath();
+			this.ctx.stroke();
+		}
 	},
 	
 	fillText: function(ctx, string, x, y, css, color) {
@@ -327,6 +365,23 @@ app.main = {
  			if(this.circleHitTopBottom(c)) c.ySpeed *= -1;
 	
 		} // end for loop
+	},
+	
+	drawMenuScreen: function(ctx){
+		ctx.save();
+		ctx.fillStyle = "black";
+		ctx.fillRect(0,0,this.WIDTH,this.HEIGHT);
+		ctx.textAlign = "center";
+		ctx.textBaselibe - "middle";
+		this.fillText(this.ctx, "Knockoffaruga", this.WIDTH/2, this.HEIGHT/2 - 200, "70pt courier", "white");
+		this.fillText(this.ctx, "Hold mouse in the circle to start", this.WIDTH/2, this.HEIGHT/2 - 100, "40pt courier", "white");
+		ctx.beginPath();
+		ctx.strokeStyle = "white";
+		ctx.arc((this.WIDTH/2), (this.HEIGHT/2) + 100, 100, 0, 2*Math.PI);
+		ctx.closePath();
+		ctx.fill();
+		ctx.stroke();
+		ctx.restore();
 	},
 	
 	drawPauseScreen: function(ctx){
