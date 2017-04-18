@@ -34,6 +34,7 @@ app.main = {
 	mouseX: undefined,
 	mouseY: undefined,
 	menuradius: undefined,
+	enemies: [],
     
 	// CIRCLE: Object.freeze( {
 	// 	NUM_CIRCLES_START: 5,
@@ -73,7 +74,6 @@ app.main = {
 	animationID: 0,
 	// colors: ["#FD5B78","#FF6037","#FF9966","#FFFF66","#66FF66","#50BFE6","#FF6EFF","#EE34D2"],
 	sound: undefined,
-	enemy: undefined,
 	
     // methods
 	init : function() {
@@ -82,12 +82,14 @@ app.main = {
 		this.mouseX = 0;
 		this.mouseY = 0;
 		this.menuradius = 0;
+		for (var i = 0; i < 10; i ++){
+			this.enemies.push(new this.Enemy(this.WIDTH, this.HEIGHT));
+		}
 		this.canvas = document.querySelector('canvas');
 		this.canvas.width = this.WIDTH;
 		this.canvas.height = this.HEIGHT;
 		this.ctx = this.canvas.getContext('2d');
 		this.player = new this.Player(this.WIDTH, this.HEIGHT);
-		this.enemy = new this.Enemy(this.WIDTH, this.HEIGHT);
 		this.canvas.addEventListener("mousemove", this.player.movePlayer);
 		this.player = new this.Player(this.WIDTH, this.HEIGHT); //setup the player
 		this.canvas.addEventListener("mousemove", this.player.movePlayer); //link the mouse to the player moving 
@@ -145,6 +147,10 @@ app.main = {
 		this.img = new Image();
 		this.img.src = 'media/redship.png';
 		this.color = "red";
+		this.state = "alive";
+		this.lives = 2;
+		this.hurttimer = 0;
+		this.prevcolor = this.color;
 	},
 	
 	moveEnemy: function(enemy){
@@ -160,11 +166,11 @@ app.main = {
 		if (enemy.side == 4){//left
 			enemy.x ++;
 		}
-		console.log("Enemy Pos: (" +enemy.x+ ", " +enemy.y+ ")");
 	},
 	
 	Enemy: function(width, height){
 		this.side = Math.floor((Math.random()*4)+1); //return a random num between 1 & 4
+		this.state = true;
 		if (this.side == 1){ //top
 			this.x = Math.floor((Math.random()*width)+1);
 			this.y = -50;
@@ -234,7 +240,7 @@ app.main = {
 	 	// 4) UPDATE
 	 	// move circles
 		//this.moveCircles(dt);
-		this.checkForCollisions();
+		//this.checkForCollisions();
 		//if circle leaves the screen
 		if (this.circleHitLeftRight(this)){
 			this.xSpeed *= -1;
@@ -275,15 +281,36 @@ app.main = {
 		}
 		
 		if (this.game){
-			this.ctx.drawImage(this.enemy.img, this.enemy.x, this.enemy.y, 80, 80);
-			this.ctx.drawImage(this.player.img, this.player.x, this.player.y, 100, 100);
-			this.ctx.beginPath();
-			this.ctx.arc(this.player.x+50,this.player.y+50,75,0,2*Math.PI);
-			this.ctx.strokeStyle = this.player.color;
-			this.ctx.closePath();
-			this.ctx.stroke();
-			this.moveEnemy(this.enemy);
+			for (var i = 0; i < this.enemies.length; i++){
+				var enemy = this.enemies[i];
+				if (enemy.state){
+					this.moveEnemy(enemy);
+				}
+				this.ctx.drawImage(enemy.img, enemy.x, enemy.y, 80, 80);
+				if (this.player.state != "hurt"){
+					this.checkForCollisions(enemy);
+				}
+				if (enemy.state == false){
+					this.enemies.splice(i, 1);
+					i --;
+				}
+			}
 		}
+		if (this.player.state == "hurt"){
+			this.player.hurttimer += 1;
+				if (this.player.hurttimer > 120){
+					this.player.hurttimer = 0;
+					this.player.color = this.player.prevcolor;
+					this.player.state = "alive";
+			}
+			console.log("Hurt Timer: " +this.player.hurttimer);
+		}
+		this.ctx.drawImage(this.player.img, this.player.x, this.player.y, 100, 100);
+		this.ctx.beginPath();
+		this.ctx.arc(this.player.x+50,this.player.y+50,75,0,2*Math.PI);
+		this.ctx.strokeStyle = this.player.color;
+		this.ctx.closePath();
+		this.ctx.stroke();
 	},
 	
 	fillText: function(ctx, string, x, y, css, color) {
@@ -331,7 +358,6 @@ app.main = {
 			this.y += this.ySpeed * this.speed * dt;
 		};
 		var array = [];
-		debugger;
 		for(var i=0; i < num; i++){
 			var c = {};
 			c.x = getRandom(this.CIRCLE.START_RADIUS*2, this.WIDTH - this.CIRCLE.START_RADIUS*2);
@@ -552,49 +578,23 @@ app.main = {
 	},
 	
 	
-	checkForCollisions: function(){
-		if(this.gameState == this.GAME_STATE.EXPLODING){
-			// check for collisions between circles
-			for(var i=0;i<this.circles.length; i++){
-				var c1 = this.circles[i];
-				// only check for collisions if c1 is exploding
-				if (c1.state === this.CIRCLE_STATE.NORMAL) continue;   
-				if (c1.state === this.CIRCLE_STATE.DONE) continue;
-				for(var j=0;j<this.circles.length; j++){
-					var c2 = this.circles[j];
-				// don't check for collisions if c2 is the same circle
-					if (c1 === c2) continue; 
-				// don't check for collisions if c2 is already exploding 
-					if (c2.state != this.CIRCLE_STATE.NORMAL ) continue;  
-					if (c2.state === this.CIRCLE_STATE.DONE) continue;
-				
-					// Now you finally can check for a collision
-					if(circlesIntersect(c1,c2) ){
-						this.sound.playEffect();
-						c2.state = this.CIRCLE_STATE.EXPLODING;
-						c2.xSpeed = c2.ySpeed = 0;
-						this.roundScore ++;
-					}
-				}
-			} // end for
-			
-			// round over?
-			var isOver = true;
-			for(var i=0;i<this.circles.length; i++){
-				var c = this.circles[i];
-				if(c.state != this.CIRCLE_STATE.NORMAL && c.state != this.CIRCLE_STATE.DONE){
-				 isOver = false;
-				 break;
-				}
-			} // end for
-		
-			if(isOver){
-				this.gameState = this.GAME_STATE.ROUND_OVER;
-				this.totalScore += this.roundScore;
-				this.stopBGAudio();
-			 }
-				
-		} // end if GAME_STATE_EXPLODING
+	checkForCollisions: function(enemy){
+		var xdif = this.player.x - enemy.x;
+		var ydif = this.player.y - enemy.y;
+		var distance = Math.sqrt((xdif * xdif) + (ydif * ydif));
+		if (distance < 125 && this.player.color == enemy.color){
+			enemy.state = false;
+		}
+		else if (distance < 125 && this.player.color != enemy.color){
+			this.player.state = "hurt";
+			this.player.lives -= 1;
+			this.player.prevcolor = this.player.color;
+			this.player.color = "white";
+		}
+		if (this.player.lives < 0){
+			this.game = false;
+			this.menu = true;
+		}
 	},
 	
 	pauseGame: function(){
