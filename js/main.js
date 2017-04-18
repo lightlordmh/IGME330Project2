@@ -24,7 +24,7 @@ app.main = {
    	lastTime: 0, // used by calculateDeltaTime() 
     debug: true,
 	gameState : undefined,
-	roundScore : 0,
+	//roundScore : 0,
 	totalScore : 0,
 	myKeys: undefined,
 	Emitter: undefined,
@@ -282,7 +282,7 @@ app.main = {
 			this.y += this.ySpeed * this.speed * dt;
 		};
 		var array = [];
-		debugger;
+		//debugger;
 		for(var i=0; i < num; i++){
 			var c = {};
 			c.x = getRandom(this.CIRCLE.START_RADIUS*2, this.WIDTH - this.CIRCLE.START_RADIUS*2);
