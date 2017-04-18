@@ -305,6 +305,7 @@ app.main = {
 			this.drawGameOverScreen(this.ctx);
 		}
 		if (this.game){
+<<<<<<< HEAD
 			if (this.totalScore > 10){
 				this.difficulty = "Normal";
 				this.enemylimit = 60;
@@ -325,6 +326,8 @@ app.main = {
 				this.enemies.push(new this.Enemy(this.WIDTH, this.HEIGHT));
 				this.enemytimer = 0;
 			}
+=======
+>>>>>>> 3d30539ef71d8b98b015619c3311b7accd08e6b7
 			for (var i = 0; i < this.enemies.length; i++){
 				var enemy = this.enemies[i];
 				if (enemy.state){
@@ -642,9 +645,14 @@ app.main = {
 		var ydif = this.player.y - enemy.y;
 		var distance = Math.sqrt((xdif * xdif) + (ydif * ydif));
 		if (distance < 125 && this.player.color == enemy.color){
+			this.sound.playEffect();
 			enemy.state = false;
 			this.totalScore += 1;
+<<<<<<< HEAD
 			this.sound.playEffect();
+=======
+
+>>>>>>> 3d30539ef71d8b98b015619c3311b7accd08e6b7
 		}
 		else if (distance < 125 && this.player.color != enemy.color){
 			this.player.state = "hurt";
@@ -677,6 +685,12 @@ app.main = {
 		this.sound.stopBGAudio();
 	},
 	
+<<<<<<< HEAD
+=======
+	
+
+	
+>>>>>>> 3d30539ef71d8b98b015619c3311b7accd08e6b7
 	reset: function(){
 		this.numCircles += 5;
 		this.roundScore = 0;
