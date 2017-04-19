@@ -126,7 +126,7 @@ app.main = {
 		this.pulsar.maxXspeed=this.pulsar.maxYspeed=0.25;
 		this.pulsar.lifetime=500;
 		this.pulsar.expansionRate=0.05;
-		this.pulsar.numParticles=100;
+		this.pulsar.numParticles=0;
 		this.pulsar.xRange=1;
 		this.pulsar.yRange=1;
 		this.pulsar.useCircles=false;
@@ -184,6 +184,21 @@ app.main = {
 		this.colornum = Math.floor((Math.random()*4)+1); //return a random num between 1 & 4
 		this.state = true;
 		this.img = new Image();
+		var pulsar=new app.Emitter();
+		pulsar.red=255;
+		pulsar.green=Math.floor(getRandom(0,255));
+		pulsar.blue=Math.floor(getRandom(0,255));
+		pulsar.minXspeed=pulsar.minYspeed=-0.25;
+		pulsar.maxXspeed=pulsar.maxYspeed=0.25;
+		pulsar.lifetime=500;
+		pulsar.expansionRate=0.05;
+		pulsar.numParticles=10;//youcouldmakethissmaller!
+		pulsar.xRange=1;
+		pulsar.yRange=1;
+		pulsar.useCircles=true;
+		pulsar.useSquares=false;
+		pulsar.createParticles({x:540,y:100});
+		this.pulsar=pulsar;
 		if (this.side == 1){ //top
 			this.x = Math.floor((Math.random()*width)+1);
 			this.y = -50;
@@ -327,6 +342,9 @@ app.main = {
 				var enemy = this.enemies[i];
 				if (enemy.state){
 					this.moveEnemy(enemy);
+					if(enemy.pulsar){
+						enemy.pulsar.updateAndDraw(this.ctx,{x:enemy.x+40,y:enemy.y+40});
+			}
 				}
 				this.ctx.drawImage(enemy.img, enemy.x, enemy.y, 80, 80);
 				if (this.player.state != "hurt"){
