@@ -23,8 +23,7 @@ app.main = {
     ctx: undefined,
    	lastTime: 0, // used by calculateDeltaTime() 
     debug: true,
-	gameState : undefined,
-	//roundScore : 0,
+
 	totalScore : 0,
 	myKeys: undefined,
 	Emitter: undefined,
@@ -37,51 +36,22 @@ app.main = {
 	enemies: [],
 	enemytimer: 0,
 	enemylimit: 120,
-    
-	// CIRCLE: Object.freeze( {
-	// 	NUM_CIRCLES_START: 5,
-	// 	NUM_CIRCLES_END : 20,
-	// 	START_RADIUS : 8,
-	// 	MAX_RADIUS : 45,
-	// 	MIN_RADIUS : 2,
-	// 	MAX_LIFETIME : 2.5,
-	// 	MAX_SPEED : 80,
-	// 	EXPLOSION_SPEED : 60,
-	// 	IMPLOSION_SPEED : 84,
-	// }),
-	
-	
-	GAME_STATE: Object.freeze( { // another fake enumeration
-		BEGIN : 0,
-		DEFAULT : 1,
-		EXPLODING : 2,
-		ROUND_OVER : 3,
-		REPEAT_LEVEL : 4,
-		END : 5
-	}),
-	
-	// CIRCLE_STATE: Object.freeze({
-	// 	NORMAL: 0,
-	// 	EXPLODING: 1,
-	// 	MAX_SIZE: 2,
-	// 	IMPLODING: 3,
-	// 	DONE: 4,
-	// }),
-	// circles: [],
-	// numCircles: this.NUM_CIRCLES_START,
+
+	//game state properties
 	menu: true,
 	game: false,
 	paused: false,
 	gameover: false,
 	instruct: false,
 	animationID: 0,
-	// colors: ["#FD5B78","#FF6037","#FF9966","#FFFF66","#66FF66","#50BFE6","#FF6EFF","#EE34D2"],
+
 	sound: undefined,
 	difficulty: undefined,
 	
     // methods
 	init : function() {
 		console.log("app.main.init() called");
+
 		// initialize properties
 		this.mouseX = 0;
 		this.mouseY = 0;
@@ -94,16 +64,16 @@ app.main = {
 		for (var i = 0; i < 10; i ++){
 			this.enemies.push(new this.Enemy(this.WIDTH, this.HEIGHT));
 		}
+
+		//setup the canvas
 		this.canvas = document.querySelector('canvas');
 		this.canvas.width = this.WIDTH;
 		this.canvas.height = this.HEIGHT;
 		this.ctx = this.canvas.getContext('2d');
-		this.player = new this.Player(this.WIDTH, this.HEIGHT);
-		this.canvas.addEventListener("mousemove", this.player.movePlayer);
-		this.player = new this.Player(this.WIDTH, this.HEIGHT); //setup the player
+
+		//setup the player
+		this.player = new this.Player(this.WIDTH, this.HEIGHT); 
 		this.canvas.addEventListener("mousemove", this.player.movePlayer); //link the mouse to the player moving 
-		
-		//setup background image
 
 		//setting up sound effects
 		this.bgAudio = document.querySelector("#bgAudio");
@@ -134,16 +104,11 @@ app.main = {
 		this.pulsar.createParticles({x:540,y:100});
 		
 		// start the game loop
-		// this.numCircles = this.CIRCLE.NUM_CIRCLES_START;
-		// this.circles = this.makeCircles(this.numCircles);
-		console.log("this.circles = " +this.circles);
-		this.gameState = this.GAME_STATE.BEGIN;
-		//this.canvas.onmousedown = this.doMousedown.bind(this);
 		this.canvas.onmousemove = this.movePlayer.bind(this);
-		this.reset();
 		this.update();
 	},
-	
+
+	// gets the mouse position and move the player to it
 	movePlayer: function(e){
 		var mouse = getMouse(e);
 		this.mouseX = mouse.x;
@@ -152,9 +117,14 @@ app.main = {
 		this.player.y = mouse.y-50;
 	},
 	
+	//Function constructor for the Player 
 	Player: function(width, height){
+
+		//the players start location
 		this.x = width/2;
 		this.y = height/2;
+
+		//setup the player's image, color, state, lives, damage timer, and previous color
 		this.img = new Image();
 		this.img.src = 'media/redship.png';
 		this.color = "red";
@@ -164,6 +134,7 @@ app.main = {
 		this.prevcolor = this.color;
 	},
 	
+	//moves an enemy based its side
 	moveEnemy: function(enemy){
 		if (enemy.side == 1){//top
 			enemy.y ++;
@@ -179,11 +150,19 @@ app.main = {
 		}
 	},
 	
+	//Function constructor for an enemies
+	//sets up the enemy
 	Enemy: function(width, height){
+
+		//randomly selects a side and color for the enemy
 		this.side = Math.floor((Math.random()*4)+1); //return a random num between 1 & 4
 		this.colornum = Math.floor((Math.random()*4)+1); //return a random num between 1 & 4
+		
+		//set up the state and image for the enemy
 		this.state = true;
 		this.img = new Image();
+		
+		//based on the side pick a random position for the enemy to start at
 		if (this.side == 1){ //top
 			this.x = Math.floor((Math.random()*width)+1);
 			this.y = -50;
@@ -200,6 +179,8 @@ app.main = {
 			this.x = -50;
 			this.y = Math.floor((Math.random()*height)+1);
 		}
+
+		//based on the color number picked set the enemies color and image
 		if (this.colornum == 1){
 			this.color = "red";
 			this.img.src = 'media/redenemy.png';
@@ -218,27 +199,30 @@ app.main = {
 		}
 	},
 	
+	//Main game loop
 	update: function(){
-		// 1) LOOP
+
 		// schedule a call to update()
 	 	this.animationID = requestAnimationFrame(this.update.bind(this));
 	 	
-	 	// 2) PAUSED?
-	 	// if so, bail out of loop
+	 	// if paused exit game loop
 	 	if (this.paused){
 			this.drawPauseScreen(this.ctx);
 			return;
 		}
-		//ctx.arc((this.WIDTH/2), (this.HEIGHT/2) + 100, 100, 0, 2*Math.PI);
+
+		// if in the menu draw the menu screen
 		if (this.menu){
 			this.drawMenuScreen(this.ctx);
 			var xdif = (this.mouseX-(this.WIDTH/2));
 			var ydif = (this.mouseY-(this.HEIGHT/2 + 100));
 			var distance = Math.sqrt((xdif*xdif) +(ydif*ydif));
 
-			//console.log("Distance: " +distance);
+			//if player is in the start circle expand the inner circle 
 			if (distance < 100){
 				this.menuradius += 1;
+
+				//if the inner circle is at max then switch to the game and play background music
 				if (this.menuradius > 100){
 					this.menuradius = 0;
 					this.menu = false;
@@ -246,63 +230,42 @@ app.main = {
 					this.sound.playBGAudio();
 				}
 			}
+
+			//if the player is not in the start circle decrease the inner circle until it is at 0
 			else{
 				this.menuradius -= 1;
 				if (this.menuradius < 0){
 					this.menuradius = 0;
 				}
 			}
+			//setup the inner circle styles and draw it
 			this.ctx.strokeStyle = "white";
 			this.ctx.fillStyle = "white";
 			this.ctx.beginPath();
 			this.ctx.arc((this.WIDTH/2), (this.HEIGHT/2) + 100, this.menuradius, 0, 2*Math.PI);
 			this.ctx.fill();
 			this.ctx.closePath();
-			//console.log("Radius: " +this.menuradius);
 			return;
 		}
-	 	// 3) HOW MUCH TIME HAS GONE BY?
-	 	// 4) UPDATE
-	 	// move circles
-		//this.moveCircles(dt);
-		//this.checkForCollisions();
-		//if circle leaves the screen
-		if (this.circleHitLeftRight(this)){
-			this.xSpeed *= -1;
-			this.move(dt);
-		}
-		if (this.circleHitTopBottom(this)){
-			this.ySpeed *= -1;
-			this.move(dt);
-		}
-		
-		// 5) DRAW	
-		// i) draw background
+
+		//draw background
 		this.ctx.fillStyle = "black"; 
 		this.ctx.fillRect(0,0,this.WIDTH,this.HEIGHT); 
-
-		// ii) draw circles
-		/*this.ctx.globalAlpha = 0.9;
-		this.drawCircles(this.ctx);
-		// iii) draw HUD
-		this.ctx.globalAlpha = 1.0;
-		this.drawHUD(this.ctx);
-		*/
-
-		if (this.gameState == this.GAME_STATE.BEGIN || this.gameState == this.GAME_STATE.ROUND_OVER){
-			if (this.myKeys.keydown[this.myKeys.KEYBOARD.KEY_UP] && this.myKeys.keydown[this.myKeys.KEYBOARD.KEY_SHIFT]){
-				this.totalScore ++;
-				this.sound.playEffect();
-			}
-		}
 		
+		//if the current state is the instruction state draw that screen
 		if (this.instruct){
 			this.drawInstructScreen(this.ctx);
 		}
+
+		//if the current state is the game over state draw that to the screen
 		if (this.gameover){
 			this.drawGameOverScreen(this.ctx);
 		}
+
+		//if the current state is the game state 
 		if (this.game){
+
+			//based on the total score set the difficulty and enemylimit
 			if (this.totalScore > 10){
 				this.difficulty = "Normal";
 				this.enemylimit = 60;
@@ -319,24 +282,32 @@ app.main = {
 				this.difficulty = "Insane";
 				this.enemylimit = 15;
 			}
+			//spawn new enemies
 			if (this.enemytimer > this.enemylimit){
 				this.enemies.push(new this.Enemy(this.WIDTH, this.HEIGHT));
 				this.enemytimer = 0;
 			}
+
+			//move the enemies, draw them, and remove them if they are dead
 			for (var i = 0; i < this.enemies.length; i++){
 				var enemy = this.enemies[i];
+				//move enemies
 				if (enemy.state){
 					this.moveEnemy(enemy);
 				}
 				this.ctx.drawImage(enemy.img, enemy.x, enemy.y, 80, 80);
+				//if the player is not hurt check for collision
 				if (this.player.state != "hurt"){
 					this.checkForCollisions(enemy);
 				}
+				//if the enemy is dead remove it from the list of enemies
 				if (enemy.state == false){
 					this.enemies.splice(i, 1);
 					i --;
 				}
 			}
+
+			//increment  player's hurt timer and change his color to indicate hurt
 			if (this.player.state == "hurt"){
 				this.player.hurttimer += 1;
 					if (this.player.hurttimer > 120){
@@ -345,6 +316,7 @@ app.main = {
 						this.player.state = "alive";
 				}
 			}
+			//draw the ui, player, and player border
 			this.drawHUD(this.ctx);
 			this.ctx.drawImage(this.player.img, this.player.x, this.player.y, 100, 100);
 			this.ctx.beginPath();
@@ -355,7 +327,7 @@ app.main = {
 			this.enemytimer ++;
 		}
 	},
-	
+	//from boomshine
 	fillText: function(ctx, string, x, y, css, color) {
 		ctx.save();
 		// https://developer.mozilla.org/en-US/docs/Web/CSS/font
@@ -364,7 +336,7 @@ app.main = {
 		ctx.fillText(string, x, y);
 		ctx.restore();
 	},
-	
+	//from boomshine
 	calculateDeltaTime: function(){
 		var now,fps;
 		now = performance.now(); 
@@ -374,122 +346,7 @@ app.main = {
 		return 1/fps;
 	},
 	
-	circleHitLeftRight: function (c){
-		if (c.x <= c.radius || c.x >= this.WIDTH - c.radius){
-			return true;
-		}
-	},
-	
-	circleHitTopBottom: function (c){
-		if (c.y < c.radius || c.y > this.HEIGHT - c.radius){
-			return true;
-		}
-	},
-	
-	makeCircles: function(num){
-		var circleDraw = function(ctx){
-			ctx.save();
-			ctx.beginPath();
-			ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
-			ctx.closePath();
-			ctx.fillStyle = this.fillStyle;
-			ctx.fill();
-			ctx.restore();
-		};
-		var circleMove = function(dt){
-			this.x += this.xSpeed * this.speed * dt;
-			this.y += this.ySpeed * this.speed * dt;
-		};
-		var array = [];
-		for(var i=0; i < num; i++){
-			var c = {};
-			c.x = getRandom(this.CIRCLE.START_RADIUS*2, this.WIDTH - this.CIRCLE.START_RADIUS*2);
-			c.y = getRandom(this.CIRCLE.START_RADIUS*2, this.HEIGHT - this.CIRCLE.START_RADIUS*2);
-			c.radius = this.CIRCLE.START_RADIUS;
-			var randomVector = getRandomUnitVector();
-			c.xSpeed = randomVector.x;
-			c.ySpeed = randomVector.y;
-			c.speed = this.CIRCLE.MAX_SPEED;
-			c.fillStyle = this.colors[i%this.colors.length];
-			c.state = this.CIRCLE_STATE.NORMAL;
-			c.lifetime = 0;
-			c.draw = circleDraw;
-			c.move = circleMove;
-			var pulsar=new this.Emitter();
-			pulsar.red=255;
-			pulsar.green=Math.floor(getRandom(0,255));
-			pulsar.blue=Math.floor(getRandom(0,255));
-			pulsar.minXspeed=pulsar.minYspeed=-0.25;
-			pulsar.maxXspeed=pulsar.maxYspeed=0.25;
-			pulsar.lifetime=500;
-			pulsar.expansionRate=0.05;
-			pulsar.numParticles=100;//youcouldmakethissmaller!
-			pulsar.xRange=1;
-			pulsar.yRange=1;
-			pulsar.useCircles=false;
-			pulsar.useSquares=true;
-			pulsar.createParticles({x:540,y:100});
-			c.pulsar=pulsar;
-			Object.seal(c);
-			array.push(c);
-		}
-		return array;
-	},
-	
-	drawCircles: function(ctx){
-		if(this.gameState == this.GAME_STATE.ROUND_OVER) this.ctx.globalAlpha = 0.25;
-		for(var i=0; i < this.circles.length; i++){
-			var c = this.circles[i];
-			if(c.state === this.CIRCLE_STATE.DONE) continue;
-			c.draw(ctx);
-			if(c.pulsar){
-				c.pulsar.updateAndDraw(ctx,{x:c.x,y:c.y});
-			}
-		}
-	},
-	
-	// moveCircles: function(dt){
-	// 	for(var i=0;i<this.circles.length; i++){
-	// 		var c = this.circles[i];
-	// 		if(c.state === this.CIRCLE_STATE.DONE) continue;
-	// 		if(c.state === this.CIRCLE_STATE.EXPLODING){
-	// 			c.radius += this.CIRCLE.EXPLOSION_SPEED  * dt;
-	// 			if (c.radius >= this.CIRCLE.MAX_RADIUS){
-	// 				c.state = this.CIRCLE_STATE.MAX_SIZE;
-	// 				console.log("circle #" + i + " hit CIRCLE.MAX_RADIUS");
-	// 			}
-	// 			continue;
-	// 		}
-		
-	// 		if(c.state === this.CIRCLE_STATE.MAX_SIZE){
-	// 			c.lifetime += dt; // lifetime is in seconds
-	// 			if (c.lifetime >= this.CIRCLE.MAX_LIFETIME){
-	// 				c.state = this.CIRCLE_STATE.IMPLODING;
-	// 				console.log("circle #" + i + " hit CIRCLE.MAX_LIFETIME");
-	// 			}
-	// 			continue;
-	// 		}
-				
-	// 		if(c.state === this.CIRCLE_STATE.IMPLODING){
-	// 			c.radius -= this.CIRCLE.IMPLOSION_SPEED * dt;
-	// 			if (c.radius <= this.CIRCLE.MIN_RADIUS){
-	// 				console.log("circle #" + i + " hit CIRCLE.MIN_RADIUS and is gone");
-	// 				c.state = this.CIRCLE_STATE.DONE;
-	// 				continue;
-	// 			}
-			
-	// 		}
-		
-	// 		// move circles
-	// 		c.move(dt);
-		
-	// 		// did circles leave screen?
-	// 		if(this.circleHitLeftRight(c)) c.xSpeed *= -1;
- 	// 		if(this.circleHitTopBottom(c)) c.ySpeed *= -1;
-	
-	// 	} // end for loop
-	// },
-	
+	//draws the menu to the screen
 	drawMenuScreen: function(ctx){
 		ctx.save();
 		ctx.fillStyle = "black";
@@ -508,8 +365,8 @@ app.main = {
 		ctx.restore();
 	},
 	
+	//draw the instructions to the screen
 	drawInstructScreen: function(ctx){
-		console.log("Instructions: " +this.instruct);
 		ctx.save();
 		ctx.fillStyle = "black";
 		ctx.fillRect(0,0,this.WIDTH,this.HEIGHT);
@@ -529,6 +386,7 @@ app.main = {
 		ctx.restore();
 	},
 	
+	//draws the pause message to the screen
 	drawPauseScreen: function(ctx){
 		ctx.save();
 		ctx.fillStyle = "black";
@@ -539,6 +397,7 @@ app.main = {
 		ctx.restore();
 	},
 	
+	//draws the game over screen
 	drawGameOverScreen: function(ctx){
 		ctx.save();
 		ctx.fillStyle = "black";
@@ -550,101 +409,33 @@ app.main = {
 		this.fillText(this.ctx, "Press 'q' to go back to the main menu", this.WIDTH/2, this.HEIGHT/2 + 300, "40pt courier", "white");
 		ctx.restore();
 	},
-    
-	// doMousedown: function(e){
-	// 	this.sound.playBGAudio();
-	// 	if (this.paused){
-	// 		this.paused = false;
-	// 		this.update();
-	// 		return;
-	// 	};
-	// 	if(this.gameState == this.GAME_STATE.EXPLODING)return;
-	// 	/*if(this.gameState == this.GAME_STATE.ROUND_OVER){
-	// 		this.gameState = this.GAME_STATE.DEFAULT;
-	// 		this.reset();
-	// 		return;
-	// 	}*/
-	// 	console.log("e=" + e);
-	// 	console.log("e.target=" + e.target);
-	// 	console.log("this=" + this);
-	// 	console.log("e.pageX=" +e.pageX);
-	// 	console.log("e.pageY=" +e.pageY);
-	// 	var mouse = getMouse(e);
-	// 	console.log("(mouse.x, mouse.y)" + mouse.x + "," + mouse.y);
-	// 	mouse = getMouse(e);
-	// 	var rect = {x:295,y:215,width:50,height:50};
-	// 	if(this.gameState == this.GAME_STATE.ROUND_OVER && rectangleContainsPoint(rect,mouse)){
-	// 		console.log("YELLOW BYTTON PRESSED");
-	// 		this.gameState = this.GAME_STATE.DEFAULT;
-	// 		this.reset();
-	// 		return;
-	// 	}	
-	// 	app.main.checkCircleClicked(mouse);
-	// },
-	
-	// checkCircleClicked: function(mouse){
-	// 	for(var i = this.circles.length-1; i >= 0; i-- ){
-	// 		var c = this.circles[i];
-	// 		if (pointInsideCircle(mouse.x, mouse.y, c)){
-	// 			c.xSpeed = c.ySpeed = 0;
-	// 			c.state = this.CIRCLE_STATE.EXPLODING;
-	// 			this.gameState = this.GAME_STATE.EXPLODING;
-	// 			this.roundScore ++;
-	// 			this.sound.playEffect();
-	// 			break;
-	// 		}
-	// 	}
-	// },
-		
+
+	//draws the HUD to the sceen	
 	drawHUD: function(ctx){
 		ctx.save(); // NEW
-		// draw score
-      	// fillText(string, x, y, css, color)
+
 		var lives = this.player.lives +1;
 		this.fillText(this.ctx, "Lives Remaining: " + lives + " of " + "3", 20, 20, "20pt courier", "#ddd");
 		this.fillText(this.ctx, "Total Score: " + this.totalScore, this.WIDTH - 250, 20, "20pt courier", "#ddd");
 		this.fillText(this.ctx, "Difficulty: " + this.difficulty , 20, 60, "20pt courier", "#ddd");
 		
-		// if (this.gameState == this.GAME_STATE.DEFAULT){
-		// 	document.querySelector("#button1").style.display = "none";
-		// }
-		
-		// // NEW
-		// if(this.gameState == this.GAME_STATE.BEGIN){
-		// 	ctx.textAlign = "center";
-		// 	ctx.textBaseline = "middle";
-		// 	this.fillText(this.ctx, "To begin, click a circle", this.WIDTH/2, this.HEIGHT/2, "30pt courier", "white");
-		// 	document.querySelector("#button1").style.display = "none";
-		// 	this.exhaust.updateAndDraw(this.ctx,{x:100,y:100});
-		// 	this.pulsar.updateAndDraw(this.ctx,{x:540,y:100});
-		// } // end if
-	
-		// // NEW
-		// if(this.gameState == this.GAME_STATE.ROUND_OVER){
-		// 	ctx.save();
-		// 	ctx.textAlign = "center";
-		// 	ctx.textBaseline = "middle";
-		// 	this.fillText(this.ctx, "Round Over", this.WIDTH/2, this.HEIGHT/2 - 40, "30pt courier", "red");
-		// 	this.fillText(this.ctx, "Click to continue", this.WIDTH/2, this.HEIGHT/2, "30pt courier", "red");
-		// 	this.fillText(this.ctx, "Next round there are " + (this.numCircles + 5) + " circles", this.WIDTH/2 , this.HEIGHT/2 + 35, "20pt courier", "#ddd");
-		// 	document.querySelector("#button1").style.display = "inline";
-		// 	ctx.fillStyle = "yellow";
-		// 	ctx.fillRect(295,215,50,50);
-		// } // end if
 		ctx.restore(); // NEW
 	},
 	
-	
+	//checks for collision between the player and a given enemy
 	checkForCollisions: function(enemy){
 		var xdif = this.player.x - enemy.x;
 		var ydif = this.player.y - enemy.y;
 		var distance = Math.sqrt((xdif * xdif) + (ydif * ydif));
+
+		// if the enemey and player are the same color kill the enemy, player a sound effect and give the player a point
 		if (distance < 125 && this.player.color == enemy.color){
 			this.sound.playEffect();
 			enemy.state = false;
 			this.totalScore += 1;
 			this.sound.playEffect();
 		}
+		//if the enemy and player are different colors hurt the player and remove one life from the player and play a sound effect
 		else if (distance < 125 && this.player.color != enemy.color){
 			this.player.state = "hurt";
 			this.player.lives -= 1;
@@ -652,34 +443,32 @@ app.main = {
 			this.player.color = "white";
 			this.sound.playEffect();
 		}
+		//if the player is dead end the game
 		if (this.player.lives < 0){
 			this.game = false;
 			this.gameover = true;
 		}
 	},
-	
+	//from boomshine
+	//pauses the game and audio
 	pauseGame: function(){
 		this.paused = true;
 		cancelAnimationFrame(this.animationID);
 		this.stopBGAudio();
 		this.update();
 	},
-	
+	//from boomshine
+	//resumes the game and audio
 	resumeGame: function(){
 		cancelAnimationFrame(this.animationID);
 		this.paused = false;
 		this.sound.playBGAudio();
 		this.update();
 	},
-	
+	//stops the background audio
 	stopBGAudio: function(){
 		this.sound.stopBGAudio();
 	},
 
-	reset: function(){
-		this.numCircles += 5;
-		this.roundScore = 0;
-		this.circles = this.makeCircles(this.numCircles);
-	}
 	
 }; // end app.main
