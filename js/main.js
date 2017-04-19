@@ -161,7 +161,6 @@ app.main = {
 		//set up the state and image for the enemy
 		this.state = true;
 		this.img = new Image();
-<<<<<<< HEAD
 		var pulsar=new app.Emitter();
 		pulsar.red=255;
 		pulsar.green=Math.floor(getRandom(0,255));
@@ -176,11 +175,8 @@ app.main = {
 		pulsar.useCircles=true;
 		pulsar.useSquares=false;
 		pulsar.createParticles({x:540,y:100});
-		this.pulsar=pulsar;
-=======
-		
+		this.pulsar=pulsar;		
 		//based on the side pick a random position for the enemy to start at
->>>>>>> 8ecc5b6517d1077304a987eb809923af14a5cc04
 		if (this.side == 1){ //top
 			this.x = Math.floor((Math.random()*width)+1);
 			this.y = -50;
@@ -377,6 +373,7 @@ app.main = {
 		this.fillText(this.ctx, "Knockoffaruga", this.WIDTH/2, this.HEIGHT/2 - 200, "70pt courier", "white");
 		this.fillText(this.ctx, "Hold mouse in the circle to start", this.WIDTH/2, this.HEIGHT/2 - 100, "40pt courier", "white");
 		this.fillText(this.ctx, "Press 'e' to go to the instructions", this.WIDTH/2, this.HEIGHT/2 + 300, "30pt courier", "white");
+		this.fillText(this.ctx, "Made by Isaac Walerstein & Kyle Vanderwiel", this.WIDTH/2, this.HEIGHT/2 + 400, "15pt courier", "white");
 		ctx.beginPath();
 		ctx.strokeStyle = "white";
 		ctx.arc((this.WIDTH/2), (this.HEIGHT/2) + 100, 100, 0, 2*Math.PI);
